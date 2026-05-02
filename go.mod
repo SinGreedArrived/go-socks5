@@ -1,4 +1,4 @@
-module github.com/things-go/go-socks5
+module github.com/SinGreedArrived/go-socks5
 
 go 1.18
 
@@ -14,5 +14,3 @@ require (
 	golang.org/x/sys v0.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/things-go/go-socks5 => github.com/SinGreedArrived/go-socks5 v0.0.0-20260502135916-1e05c47fef20
