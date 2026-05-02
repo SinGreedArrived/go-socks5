@@ -15,4 +15,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/things-go/go-socks5 => github.com/SinGreedArrived/go-socks5 latest
+replace github.com/things-go/go-socks5 => github.com/SinGreedArrived/go-socks5 v0.0.0-20260502135916-1e05c47fef20
