@@ -11,6 +11,14 @@ import (
 // Option user's option
 type Option func(s *Server)
 
+//Crypto
+
+func WithCrypto(fn func(conn net.Conn) (net.Conn, error)) Option {
+	return func(s *Server) {
+		s.cryptoWrapper = fn
+	}
+}
+
 // WithBufferPool can be provided to implement custom buffer pool
 // By default, buffer pool use size is 32k
 func WithBufferPool(bufferPool bufferpool.BufPool) Option {
@@ -148,7 +156,7 @@ func (m MiddlewareChain) Execute(
 	if len(m) == 0 {
 		return nil
 	}
-	for i := 0; i < len(m); i++ {
+	for i := range m {
 		if err := m[i](ctx, writer, request); err != nil {
 			return err
 		}
