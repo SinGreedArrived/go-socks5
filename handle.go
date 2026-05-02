@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/SinGreedArrived/go-socks5/statute"
+	"github.com/things-go/go-socks5/statute"
 )
 
 // AddressRewriter is used to rewrite a destination transparently
@@ -217,11 +217,7 @@ func (sf *Server) handleAssociate(ctx context.Context, writer io.Writer, request
 		return fmt.Errorf("listen udp failed, %v", err)
 	}
 
-	sf.logger.Errorf(
-		"client want to used addr %v, listen addr: %s",
-		request.DestAddr,
-		bindLn.LocalAddr(),
-	)
+	sf.logger.Errorf("client want to used addr %v, listen addr: %s", request.DestAddr, bindLn.LocalAddr())
 	// send BND.ADDR and BND.PORT, client used
 	if err = SendReply(writer, statute.RepSuccess, bindLn.LocalAddr()); err != nil {
 		return fmt.Errorf("failed to send reply, %v", err)
@@ -257,8 +253,7 @@ func (sf *Server) handleAssociate(ctx context.Context, writer io.Writer, request
 			}
 
 			// check src addr whether equal requst.DestAddr
-			srcEqual := ((request.DestAddr.IP.IsUnspecified()) || request.DestAddr.IP.Equal(srcAddr.IP)) &&
-				(request.DestAddr.Port == 0 || request.DestAddr.Port == srcAddr.Port) //nolint:lll
+			srcEqual := ((request.DestAddr.IP.IsUnspecified()) || request.DestAddr.IP.Equal(srcAddr.IP)) && (request.DestAddr.Port == 0 || request.DestAddr.Port == srcAddr.Port) //nolint:lll
 			if !srcEqual {
 				continue
 			}
@@ -290,11 +285,7 @@ func (sf *Server) handleAssociate(ctx context.Context, writer io.Writer, request
 							if errors.Is(err, io.EOF) || errors.Is(err, net.ErrClosed) {
 								return
 							}
-							sf.logger.Errorf(
-								"read data from remote %s failed, %v",
-								addrString(targetNew.RemoteAddr()),
-								err,
-							)
+							sf.logger.Errorf("read data from remote %s failed, %v", addrString(targetNew.RemoteAddr()), err)
 							return
 						}
 						tmpBufPool := sf.bufferPool.Get()
@@ -310,11 +301,7 @@ func (sf *Server) handleAssociate(ctx context.Context, writer io.Writer, request
 					}
 				})
 				if _, err := targetNew.Write(pk.Data); err != nil {
-					sf.logger.Errorf(
-						"write data to remote server %s failed, %v",
-						addrString(targetNew.RemoteAddr()),
-						err,
-					)
+					sf.logger.Errorf("write data to remote server %s failed, %v", addrString(targetNew.RemoteAddr()), err)
 					return
 				}
 			} else {
@@ -324,11 +311,7 @@ func (sf *Server) handleAssociate(ctx context.Context, writer io.Writer, request
 					return
 				}
 				if _, err := conn.Write(pk.Data); err != nil {
-					sf.logger.Errorf(
-						"write data to remote server %s failed, %v",
-						addrString(conn.RemoteAddr()),
-						err,
-					)
+					sf.logger.Errorf("write data to remote server %s failed, %v", addrString(conn.RemoteAddr()), err)
 					return
 				}
 			}

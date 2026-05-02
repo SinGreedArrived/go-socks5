@@ -3,7 +3,7 @@ package socks5
 import (
 	"io"
 
-	"github.com/SinGreedArrived/go-socks5/statute"
+	"github.com/things-go/go-socks5/statute"
 )
 
 // AuthContext A Request encapsulates authentication state provided
@@ -30,11 +30,7 @@ type NoAuthAuthenticator struct{}
 func (a NoAuthAuthenticator) GetCode() uint8 { return statute.MethodNoAuth }
 
 // Authenticate implement interface Authenticator
-func (a NoAuthAuthenticator) Authenticate(
-	_ io.Reader,
-	writer io.Writer,
-	_ string,
-) (*AuthContext, error) {
+func (a NoAuthAuthenticator) Authenticate(_ io.Reader, writer io.Writer, _ string) (*AuthContext, error) {
 	_, err := writer.Write([]byte{statute.VersionSocks5, statute.MethodNoAuth})
 	return &AuthContext{statute.MethodNoAuth, make(map[string]string)}, err
 }
@@ -49,15 +45,9 @@ type UserPassAuthenticator struct {
 func (a UserPassAuthenticator) GetCode() uint8 { return statute.MethodUserPassAuth }
 
 // Authenticate implement interface Authenticator
-func (a UserPassAuthenticator) Authenticate(
-	reader io.Reader,
-	writer io.Writer,
-	userAddr string,
-) (*AuthContext, error) {
+func (a UserPassAuthenticator) Authenticate(reader io.Reader, writer io.Writer, userAddr string) (*AuthContext, error) {
 	// reply the client to use user/pass auth
-	if _, err := writer.Write(
-		[]byte{statute.VersionSocks5, statute.MethodUserPassAuth},
-	); err != nil {
+	if _, err := writer.Write([]byte{statute.VersionSocks5, statute.MethodUserPassAuth}); err != nil {
 		return nil, err
 	}
 	// get user and user's password
@@ -68,17 +58,13 @@ func (a UserPassAuthenticator) Authenticate(
 
 	// Verify the password
 	if !a.Credentials.Valid(string(nup.User), string(nup.Pass), userAddr) {
-		if _, err := writer.Write(
-			[]byte{statute.UserPassAuthVersion, statute.AuthFailure},
-		); err != nil {
+		if _, err := writer.Write([]byte{statute.UserPassAuthVersion, statute.AuthFailure}); err != nil {
 			return nil, err
 		}
 		return nil, statute.ErrUserAuthFailed
 	}
 
-	if _, err := writer.Write(
-		[]byte{statute.UserPassAuthVersion, statute.AuthSuccess},
-	); err != nil {
+	if _, err := writer.Write([]byte{statute.UserPassAuthVersion, statute.AuthSuccess}); err != nil {
 		return nil, err
 	}
 	// Done
