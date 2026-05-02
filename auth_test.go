@@ -5,10 +5,9 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/SinGreedArrived/go-socks5/statute"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/things-go/go-socks5/statute"
 )
 
 func TestNoAuth(t *testing.T) {
@@ -43,7 +42,11 @@ func TestPasswordAuth_Valid(t *testing.T) {
 	require.True(t, ok)
 	require.Equal(t, "bar", val)
 
-	assert.Equal(t, []byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthSuccess}, rsp.Bytes())
+	assert.Equal(
+		t,
+		[]byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthSuccess},
+		rsp.Bytes(),
+	)
 }
 
 func TestPasswordAuth_Invalid(t *testing.T) {
@@ -59,5 +62,9 @@ func TestPasswordAuth_Invalid(t *testing.T) {
 	require.True(t, errors.Is(err, statute.ErrUserAuthFailed))
 	require.Nil(t, ctx)
 
-	assert.Equal(t, []byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthFailure}, rsp.Bytes())
+	assert.Equal(
+		t,
+		[]byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthFailure},
+		rsp.Bytes(),
+	)
 }

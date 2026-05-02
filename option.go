@@ -5,7 +5,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/things-go/go-socks5/bufferpool"
+	"github.com/SinGreedArrived/go-socks5/bufferpool"
 )
 
 // Option user's option
@@ -105,7 +105,9 @@ func WithGPool(pool GPool) Option {
 }
 
 // WithConnectHandle is used to handle a user's connect command
-func WithConnectHandle(h func(ctx context.Context, writer io.Writer, request *Request) error) Option {
+func WithConnectHandle(
+	h func(ctx context.Context, writer io.Writer, request *Request) error,
+) Option {
 	return func(s *Server) {
 		s.userConnectHandle = h
 	}
@@ -119,7 +121,9 @@ func WithBindHandle(h func(ctx context.Context, writer io.Writer, request *Reque
 }
 
 // WithAssociateHandle is used to handle a user's associate command
-func WithAssociateHandle(h func(ctx context.Context, writer io.Writer, request *Request) error) Option {
+func WithAssociateHandle(
+	h func(ctx context.Context, writer io.Writer, request *Request) error,
+) Option {
 	return func(s *Server) {
 		s.userAssociateHandle = h
 	}
@@ -135,7 +139,12 @@ type Middleware func(ctx context.Context, writer io.Writer, request *Request) er
 type MiddlewareChain []Middleware
 
 // Execute is used to add interceptors in chain
-func (m MiddlewareChain) Execute(ctx context.Context, writer io.Writer, request *Request, last Handler) error {
+func (m MiddlewareChain) Execute(
+	ctx context.Context,
+	writer io.Writer,
+	request *Request,
+	last Handler,
+) error {
 	if len(m) == 0 {
 		return nil
 	}

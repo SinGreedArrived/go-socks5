@@ -12,11 +12,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/SinGreedArrived/go-socks5/statute"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/proxy"
-
-	"github.com/things-go/go-socks5/statute"
 )
 
 func TestSOCKS5_Connect(t *testing.T) {
@@ -44,11 +43,13 @@ func TestSOCKS5_Connect(t *testing.T) {
 		srv := NewServer(
 			WithAuthMethods([]Authenticator{cator}),
 			WithLogger(NewLogger(log.New(os.Stdout, "socks5: ", log.LstdFlags))),
-			WithDialAndRequest(func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
-				require.Equal(t, network, "tcp")
-				require.Equal(t, addr, lAddr.String())
-				return net.Dial(network, addr) // nolint: noctx
-			}),
+			WithDialAndRequest(
+				func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
+					require.Equal(t, network, "tcp")
+					require.Equal(t, addr, lAddr.String())
+					return net.Dial(network, addr) // nolint: noctx
+				},
+			),
 		)
 
 		// Start listening
@@ -65,8 +66,19 @@ func TestSOCKS5_Connect(t *testing.T) {
 		// Connect, auth and connec to local
 		req := bytes.NewBuffer(
 			[]byte{
-				statute.VersionSocks5, 2, statute.MethodNoAuth, statute.MethodUserPassAuth, // methods
-				statute.UserPassAuthVersion, 3, 'f', 'o', 'o', 3, 'b', 'a', 'r', // userpass auth
+				statute.VersionSocks5,
+				2,
+				statute.MethodNoAuth,
+				statute.MethodUserPassAuth, // methods
+				statute.UserPassAuthVersion,
+				3,
+				'f',
+				'o',
+				'o',
+				3,
+				'b',
+				'a',
+				'r', // userpass auth
 			})
 		reqHead := statute.Request{
 			Version:  statute.VersionSocks5,
@@ -140,11 +152,13 @@ func TestSOCKS5_Connect(t *testing.T) {
 		srv := NewServer(
 			WithAuthMethods([]Authenticator{cator}),
 			WithLogger(NewLogger(log.New(os.Stdout, "socks5: ", log.LstdFlags))),
-			WithDialAndRequest(func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
-				require.Equal(t, network, "tcp")
-				require.Equal(t, addr, lAddr.String())
-				return net.Dial(network, addr) // nolint: noctx
-			}),
+			WithDialAndRequest(
+				func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
+					require.Equal(t, network, "tcp")
+					require.Equal(t, addr, lAddr.String())
+					return net.Dial(network, addr) // nolint: noctx
+				},
+			),
 			WithConnectHandle(func(ctx context.Context, writer io.Writer, request *Request) error {
 				rsp := statute.Reply{
 					Version:  statute.VersionSocks5,
@@ -179,8 +193,19 @@ func TestSOCKS5_Connect(t *testing.T) {
 		// Connect, auth and connec to local
 		req := bytes.NewBuffer(
 			[]byte{
-				statute.VersionSocks5, 2, statute.MethodNoAuth, statute.MethodUserPassAuth, // methods
-				statute.UserPassAuthVersion, 3, 'f', 'o', 'o', 3, 'b', 'a', 'r', // userpass auth
+				statute.VersionSocks5,
+				2,
+				statute.MethodNoAuth,
+				statute.MethodUserPassAuth, // methods
+				statute.UserPassAuthVersion,
+				3,
+				'f',
+				'o',
+				'o',
+				3,
+				'b',
+				'a',
+				'r', // userpass auth
 			})
 		reqHead := statute.Request{
 			Version:  statute.VersionSocks5,
@@ -256,16 +281,20 @@ func TestSOCKS5_Connect(t *testing.T) {
 		srv := NewServer(
 			WithAuthMethods([]Authenticator{cator}),
 			WithLogger(NewLogger(log.New(os.Stdout, "socks5: ", log.LstdFlags))),
-			WithDialAndRequest(func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
-				require.Equal(t, network, "tcp")
-				require.Equal(t, addr, lAddr.String())
-				return net.Dial(network, addr) // nolint: noctx
-			}),
-			WithConnectMiddleware(func(ctx context.Context, writer io.Writer, request *Request) error {
-				middlewareCalled = true
-				require.Equal(t, request.LocalAddr.String(), `127.0.0.1:12366`)
-				return nil
-			}),
+			WithDialAndRequest(
+				func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
+					require.Equal(t, network, "tcp")
+					require.Equal(t, addr, lAddr.String())
+					return net.Dial(network, addr) // nolint: noctx
+				},
+			),
+			WithConnectMiddleware(
+				func(ctx context.Context, writer io.Writer, request *Request) error {
+					middlewareCalled = true
+					require.Equal(t, request.LocalAddr.String(), `127.0.0.1:12366`)
+					return nil
+				},
+			),
 		)
 
 		// Start listening
@@ -282,8 +311,19 @@ func TestSOCKS5_Connect(t *testing.T) {
 		// Connect, auth and connec to local
 		req := bytes.NewBuffer(
 			[]byte{
-				statute.VersionSocks5, 2, statute.MethodNoAuth, statute.MethodUserPassAuth, // methods
-				statute.UserPassAuthVersion, 3, 'f', 'o', 'o', 3, 'b', 'a', 'r', // userpass auth
+				statute.VersionSocks5,
+				2,
+				statute.MethodNoAuth,
+				statute.MethodUserPassAuth, // methods
+				statute.UserPassAuthVersion,
+				3,
+				'f',
+				'o',
+				'o',
+				3,
+				'b',
+				'a',
+				'r', // userpass auth
 			})
 		reqHead := statute.Request{
 			Version:  statute.VersionSocks5,
@@ -360,16 +400,20 @@ func TestSOCKS5_Connect(t *testing.T) {
 		srv := NewServer(
 			WithAuthMethods([]Authenticator{cator}),
 			WithLogger(NewLogger(log.New(os.Stdout, "socks5: ", log.LstdFlags))),
-			WithDialAndRequest(func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
-				require.Equal(t, network, "tcp")
-				require.Equal(t, addr, lAddr.String())
-				return net.Dial(network, addr) // nolint: noctx
-			}),
-			WithConnectMiddleware(func(ctx context.Context, writer io.Writer, request *Request) error {
-				middlewareCalled = true
-				require.Equal(t, request.LocalAddr.String(), `127.0.0.1:12367`)
-				return errors.New("Address is blocked!")
-			}),
+			WithDialAndRequest(
+				func(ctx context.Context, network, addr string, request *Request) (net.Conn, error) {
+					require.Equal(t, network, "tcp")
+					require.Equal(t, addr, lAddr.String())
+					return net.Dial(network, addr) // nolint: noctx
+				},
+			),
+			WithConnectMiddleware(
+				func(ctx context.Context, writer io.Writer, request *Request) error {
+					middlewareCalled = true
+					require.Equal(t, request.LocalAddr.String(), `127.0.0.1:12367`)
+					return errors.New("Address is blocked!")
+				},
+			),
 		)
 
 		// Start listening
@@ -386,8 +430,19 @@ func TestSOCKS5_Connect(t *testing.T) {
 		// Connect, auth and connec to local
 		req := bytes.NewBuffer(
 			[]byte{
-				statute.VersionSocks5, 2, statute.MethodNoAuth, statute.MethodUserPassAuth, // methods
-				statute.UserPassAuthVersion, 3, 'f', 'o', 'o', 3, 'b', 'a', 'r', // userpass auth
+				statute.VersionSocks5,
+				2,
+				statute.MethodNoAuth,
+				statute.MethodUserPassAuth, // methods
+				statute.UserPassAuthVersion,
+				3,
+				'f',
+				'o',
+				'o',
+				3,
+				'b',
+				'a',
+				'r', // userpass auth
 			})
 		reqHead := statute.Request{
 			Version:  statute.VersionSocks5,
@@ -431,7 +486,30 @@ func TestSOCKS5_Connect(t *testing.T) {
 		_, err = io.ReadFull(conn, out)
 		conn.SetDeadline(time.Time{}) //nolint: errcheck
 		require.ErrorIs(t, err, io.ErrUnexpectedEOF)
-		assert.Equal(t, []byte{0x5, 0x2, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, out)
+		assert.Equal(
+			t,
+			[]byte{
+				0x5,
+				0x2,
+				0x1,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+				0x0,
+			},
+			out,
+		)
 		assert.True(t, middlewareCalled, "middleware not called")
 	})
 }
@@ -527,7 +605,10 @@ func TestSOCKS5_Associate(t *testing.T) {
 		msgBytes = append(msgBytes, ipByte...)
 		msgBytes = append(msgBytes, portByte...)
 		msgBytes = append(msgBytes, []byte("ping")...)
-		client.WriteTo(msgBytes, &net.UDPAddr{IP: locIP, Port: rspHead.BndAddr.Port}) //nolint: errcheck
+		client.WriteTo(
+			msgBytes,
+			&net.UDPAddr{IP: locIP, Port: rspHead.BndAddr.Port},
+		) //nolint: errcheck
 		// t.Logf("proxy bind listen port: %d", rspHead.BndAddr.Port)
 		response := make([]byte, 1024)
 		n, _, err := client.ReadFrom(response)
@@ -569,11 +650,13 @@ func TestSOCKS5_Associate(t *testing.T) {
 		proxySrv := NewServer(
 			WithAuthMethods([]Authenticator{cator}),
 			WithLogger(NewLogger(log.New(os.Stdout, "socks5: ", log.LstdFlags))),
-			WithAssociateMiddleware(func(ctx context.Context, writer io.Writer, request *Request) error {
-				require.Equal(t, request.DestAddr.Port, 12499)
-				middlewareCalled = true
-				return nil
-			}),
+			WithAssociateMiddleware(
+				func(ctx context.Context, writer io.Writer, request *Request) error {
+					require.Equal(t, request.DestAddr.Port, 12499)
+					middlewareCalled = true
+					return nil
+				},
+			),
 		)
 		// Start listening
 		go func() {
@@ -633,7 +716,10 @@ func TestSOCKS5_Associate(t *testing.T) {
 		msgBytes = append(msgBytes, ipByte...)
 		msgBytes = append(msgBytes, portByte...)
 		msgBytes = append(msgBytes, []byte("ping")...)
-		client.WriteTo(msgBytes, &net.UDPAddr{IP: locIP, Port: rspHead.BndAddr.Port}) //nolint: errcheck
+		client.WriteTo(
+			msgBytes,
+			&net.UDPAddr{IP: locIP, Port: rspHead.BndAddr.Port},
+		) //nolint: errcheck
 		// t.Logf("proxy bind listen port: %d", rspHead.BndAddr.Port)
 		response := make([]byte, 1024)
 		n, _, err := client.ReadFrom(response)
@@ -677,7 +763,12 @@ func Test_SocksWithProxy(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 
 	// client
-	dial, err := proxy.SOCKS5("tcp", "127.0.0.1:12395", &proxy.Auth{User: "foo", Password: "bar"}, proxy.Direct)
+	dial, err := proxy.SOCKS5(
+		"tcp",
+		"127.0.0.1:12395",
+		&proxy.Auth{User: "foo", Password: "bar"},
+		proxy.Direct,
+	)
 	require.NoError(t, err)
 
 	// Connect, auth and connect to local
@@ -728,7 +819,11 @@ func TestPasswordAuth_Valid_Server(t *testing.T) {
 	require.True(t, ok)
 	require.Equal(t, "bar", val)
 
-	assert.Equal(t, []byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthSuccess}, rsp.Bytes())
+	assert.Equal(
+		t,
+		[]byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthSuccess},
+		rsp.Bytes(),
+	)
 }
 
 func TestPasswordAuth_Invalid_Server(t *testing.T) {
@@ -739,11 +834,20 @@ func TestPasswordAuth_Invalid_Server(t *testing.T) {
 	}
 	s := NewServer(WithAuthMethods([]Authenticator{cator}))
 
-	ctx, err := s.authenticate(rsp, req, "", []byte{statute.MethodNoAuth, statute.MethodUserPassAuth})
+	ctx, err := s.authenticate(
+		rsp,
+		req,
+		"",
+		[]byte{statute.MethodNoAuth, statute.MethodUserPassAuth},
+	)
 	require.True(t, errors.Is(err, statute.ErrUserAuthFailed))
 	require.Nil(t, ctx)
 
-	assert.Equal(t, []byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthFailure}, rsp.Bytes())
+	assert.Equal(
+		t,
+		[]byte{statute.VersionSocks5, statute.MethodUserPassAuth, 1, statute.AuthFailure},
+		rsp.Bytes(),
+	)
 }
 
 func TestNoSupportedAuth_Server(t *testing.T) {

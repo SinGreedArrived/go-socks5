@@ -4,9 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/SinGreedArrived/go-socks5/statute"
 	"github.com/stretchr/testify/require"
-
-	"github.com/things-go/go-socks5/statute"
 )
 
 func TestPermitCommand(t *testing.T) {
