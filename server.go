@@ -57,6 +57,8 @@ type Server struct {
 	bufferPool bufferpool.BufPool
 	// goroutine pool
 	gPool GPool
+	// crypto wrapper
+	cryptoWrapper func(conn net.Conn) (net.Conn, error)
 	// user's handle
 	userConnectHandle   func(ctx context.Context, writer io.Writer, request *Request) error
 	userBindHandle      func(ctx context.Context, writer io.Writer, request *Request) error
@@ -118,6 +120,14 @@ func (sf *Server) Serve(l net.Listener) error {
 		if err != nil {
 			return err
 		}
+
+		if sf.cryptoWrapper != nil {
+			conn, err = sf.cryptoWrapper(conn)
+			if err != nil {
+				return fmt.Errorf("cryptoWrapper: %w", err)
+			}
+		}
+
 		sf.goFunc(func() {
 			if err := sf.ServeConn(conn); err != nil {
 				sf.logger.Errorf("server: %v", err)
@@ -169,7 +179,10 @@ func (sf *Server) ServeConn(conn net.Conn) error {
 		if err := SendReply(conn, statute.RepCommandNotSupported, nil); err != nil {
 			return fmt.Errorf("failed to send reply, %v", err)
 		}
-		return fmt.Errorf("unrecognized command[%d]", request.Request.Command) // nolint: staticcheck
+		return fmt.Errorf(
+			"unrecognized command[%d]",
+			request.Request.Command,
+		) // nolint: staticcheck
 	}
 
 	request.AuthContext = authContext
