@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"slices"
 
 	"github.com/SinGreedArrived/go-socks5/bufferpool"
 	"github.com/SinGreedArrived/go-socks5/statute"
@@ -121,14 +122,14 @@ func (sf *Server) Serve(l net.Listener) error {
 			return err
 		}
 
-		if sf.cryptoWrapper != nil {
-			conn, err = sf.cryptoWrapper(conn)
-			if err != nil {
-				return fmt.Errorf("cryptoWrapper: %w", err)
-			}
-		}
-
 		sf.goFunc(func() {
+			if sf.cryptoWrapper != nil {
+				conn, err = sf.cryptoWrapper(conn)
+				if err != nil {
+					sf.logger.Errorf("cryptoWrapper: %w", err)
+				}
+			}
+
 			if err := sf.ServeConn(conn); err != nil {
 				sf.logger.Errorf("server: %v", err)
 			}
@@ -197,10 +198,8 @@ func (sf *Server) authenticate(conn io.Writer, bufConn io.Reader,
 	userAddr string, methods []byte) (*AuthContext, error) {
 	// Select a usable method
 	for _, auth := range sf.authMethods {
-		for _, method := range methods {
-			if auth.GetCode() == method {
-				return auth.Authenticate(bufConn, conn, userAddr)
-			}
+		if slices.Contains(methods, auth.GetCode()) {
+			return auth.Authenticate(bufConn, conn, userAddr)
 		}
 	}
 	// No usable method found
